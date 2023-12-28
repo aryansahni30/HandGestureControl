@@ -24,8 +24,7 @@ outputVol = volInfo[0].replace('output volume:', '')
 outputVol = int(outputVol)
 pTime=0
 
-def set_volume_thread(output_vol):
-    osascript.osascript(f'set volume output volume {output_vol}')
+
 
 result2=osascript.osascript('tell application "Music" to get player state')
 
@@ -51,19 +50,38 @@ def calculateAverageFingerDistance(lmList, cx, cy):
     distances = []
     for i in [4, 8, 12, 16, 20]:  # Index of fingertips in lmList
         x, y = lmList[i][1], lmList[i][2]
-        distance = math.hypot(x - cx, y - cy)
+        distance = math.hypot(x - lmList[9][1], y - lmList[9][2])
         distances.append(distance)
     return sum(distances) / len(distances) if distances else 0
+
+def AverageFingerDistancenothumb(lmList, cx, cy):
+    distances = []
+    for i in [8, 12, 16, 20]:  # Index of fingertips in lmList
+        x, y = lmList[i][1], lmList[i][2]
+        distance = math.hypot(x - lmList[9][1], y - lmList[9][2])
+        distances.append(distance)
+    return sum(distances) / len(distances) if distances else 0
+
+def AverageFingerDistancenothumindex(lmList, cx, cy):
+    distances = []
+    for i in [12, 16, 20]:  # Index of fingertips in lmList
+        x, y = lmList[i][1], lmList[i][2]
+        distance = math.hypot(x - lmList[9][1], y - lmList[9][2])
+        distances.append(distance)
+    return sum(distances) / len(distances) if distances else 0
+
+cooldown_duration = 1.5  # seconds
+last_gesture_time = time.time()
 
 
 while True:
     success, img=cap.read()
     img=cv2.flip(img,1)
-    cTime = time.time()
-    fps = 1 / (cTime - pTime)
-    pTime = cTime
-    cv2.putText(img, f'FPS: {str(int(fps))}', (10, 40), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 0, 0), 2)
-    cv2.putText(img, f'Volume: {str(outputVol)}', (10, 70), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 0, 0), 2)
+    #cTime = time.time()
+    #fps = 1 / (cTime - pTime)
+    #pTime = cTime
+    #cv2.putText(img, f'FPS: {str(int(fps))}', (10, 40), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 0, 0), 2)
+    cv2.putText(img, f'Volume: {int(outputVol)}', (10, 70), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 0, 0), 2)
     img=detector.findHands(img)
     resized_img = cv2.resize(img, (200,200))
     lmList=detector.findPosition(img, draw=False)
@@ -79,13 +97,15 @@ while True:
         length=math.hypot(x2-x1, y2-y1) #hypotenuse, x2-x1 (delta x), y2-y1(delta y
         #print(length) #max lenth is 300 and min length is 50
         if hand_type == "Left":
+            current_time = time.time()
             cv2.circle(img, (x1,y1), 15, (255, 0, 255), cv2.FILLED)
             cv2.circle(img, (x2,y2), 15, (255, 0, 255), cv2.FILLED)
             cv2.line(img, (x1,y1), (x2,y2), (255, 0, 255), 3)
             #cv2.circle(img, (cx,cy), 15, (255, 0, 255), cv2.FILLED)
             if length<30:
                 cv2.circle(img, (cx,cy), 15, (0, 255, 0), cv2.FILLED)
-            
+            #elif current_time - last_gesture_time > cooldown_duration:
+                
             outputVol=np.interp(length, [50, 300], [0, 100])
             osascript.osascript(f'set volume output volume {outputVol}')
         
@@ -94,29 +114,34 @@ while True:
        #         print("Thumb pointing to the right")
        # elif -135 <= angle <= -45:
        #     print("Thumb pointing to the left")
-        
-        length1=math.hypot(lmList[8][1]-lmList[9][1], lmList[8][2]-lmList[9][2])
-        length2=math.hypot(lmList[12][1]-lmList[9][1], lmList[12][2]-lmList[9][2])
-        length3=math.hypot(lmList[16][1]-lmList[9][1], lmList[16][2]-lmList[9][2])
-        length4=math.hypot(lmList[20][1]-lmList[9][1], lmList[20][2]-lmList[9][2])
-       # print(length1, length2, length3, length4)
-       # if hand_type == "Right":
-       #     if length1<70 and length2<40 and length3<70 and length4<95:
-       #         
-       #         osascript.osascript('tell application "Music" to next pause')
-#
-       #     elif length1>150 and length2>160 and length3>140 and length4>100:
-       #         osascript.osascript('tell application "Music" to play')
-        
+            
+        avgdist=AverageFingerDistancenothumb(lmList, cx, cy)
+        avgdist2=AverageFingerDistancenothumindex(lmList, cx, cy)
+        #print(avgdist)
+        #print(avgdist2)
         avg_distance = calculateAverageFingerDistance(lmList, cx, cy)
-        print(avg_distance)
-
-
+        #print(avg_distance)
+        length0=math.hypot(lmList[4][1]-lmList[5][1], lmList[4][2]-lmList[5][2])
+        #print(length0)
+        length1=math.hypot(lmList[8][1]-lmList[9][1], lmList[8][2]-lmList[9][2])
+        #print(length1)
+        #length2=math.hypot(lmList[12][1]-lmList[9][1], lmList[12][2]-lmList[9][2])
+        #length3=math.hypot(lmList[16][1]-lmList[9][1], lmList[16][2]-lmList[9][2])
+        #length4=math.hypot(lmList[20][1]-lmList[9][1], lmList[20][2]-lmList[9][2])
+        #print(length1, length2, length3, length4)
         if hand_type == "Right":
-            if avg_distance < 100:
+            current_time = time.time()
+            if length0>120 and avgdist<80 and current_time - last_gesture_time > cooldown_duration:
+                osascript.osascript('tell application "Music" to previous track')
+                last_gesture_time = current_time
+            elif length1>180 and avgdist2<80 and current_time - last_gesture_time > cooldown_duration:
+                osascript.osascript('tell application "Music" to next track')
+                last_gesture_time = current_time
+            elif avg_distance < 80:
                 osascript.osascript('tell application "Music" to pause')
-            elif avg_distance > 120:
+            elif avg_distance > 165:
                 osascript.osascript('tell application "Music" to play')     
+
                
 
 
