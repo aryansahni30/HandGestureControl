@@ -1,6 +1,6 @@
 # Hand Gesture Music Control
 
-Hand Gesture Music Control is a Python program that allows you to control music playback using hand gestures captured through a webcam. The program uses the Mediapipe library for hand tracking and OpenScript for interacting with the Music application on MacOS.
+Hand Gesture Music Control is an Opencv-Python program that allows you to control music playback using hand gestures captured through a webcam. The program uses the Mediapipe library for hand tracking and OpenScript for interacting with the Music application on MacOS.
 
 ## Features
 
