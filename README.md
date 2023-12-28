@@ -4,9 +4,9 @@ Hand Gesture Music Control is an Opencv-Python program that allows you to contro
 
 ## Features
 
-- **Volume Control:** Control the volume by adjusting the distance between your index finger and thumb of your left hand. As the distance increases, the volume will also increase upto max and vice versa. 
-- **Play/Pause:** To pause music, close your right fist entirely. To play music, open your right fist completely, showing your palm and fingers stretched out.
-- **Next/Previous Track:** Close your right fist completely with only thumb stretched out to play the previous track. To play the next track, close your right fist, with thumb and index finger, both stretched out.
+- **Volume Control:** Adjust the volume dynamically by altering the distance between your left hand's index finger and thumb. Increase the distance to raise the volume, and decrease it to lower the volume, with a maximum and minimum limit.
+- **Play/Pause:** Effortlessly manage music playback with simple hand gestures. Fully close your right fist to pause the music. Open your right fist entirely, displaying your palm and extended fingers, to resume playback.
+- **Next/Previous Track:** Navigate through tracks seamlessly using distinct hand gestures. Close your right fist completely, leaving only the thumb extended, to play the previous track. To play the next track, close your right fist with both the thumb and index finger fully extended.
   
 ## Prerequisites
 
